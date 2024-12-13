@@ -1,0 +1,39 @@
+services:
+  db:
+    image: mysql:9.0
+    container_name: mysql-denzo-db
+    restart: always
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+    ports:
+      - "5654:3306"
+    volumes:
+      - denzo-db:/var/lib/mysql
+    networks:
+      - denzo-network
+
+  phpmyadmin:
+    container_name: phpmyadmin-denzo
+    image: phpmyadmin:5.2
+    restart: always
+    ports:
+      - "5655:80"
+    networks:
+      - denzo-network
+    environment:
+      PMA_HOST: db
+      UPLOAD_LIMIT: 100000000
+    depends_on:
+      - db
+
+networks:
+  denzo-network:
+    name: denzo-network
+    driver: bridge
+    
+volumes:
+  denzo-db:
+    driver: local
